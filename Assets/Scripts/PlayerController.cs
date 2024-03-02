@@ -23,6 +23,16 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Input = new InputMaster();
+        Input.Player.Jump.performed += context => Jump(); //Podpiêcie naszego
+        // skoku do akcji Jump
+    }
+    private void OnEnable()
+    {
+        Input.Enable(); // W³¹cz sterowanie
+    }
+    private void OnDisable()
+    {
+        Input.Disable(); // Wy³¹cz sterowanie
     }
 
     private void Jump()
@@ -54,7 +64,20 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
-        
+        if (rb.velocity.y < 0)
+        {
+            rb.AddForce(new Vector2(0f, liftingForce * Time.deltaTime));
+        }
+
+        if (IsGrounded() && Time.time >= timestamp)
+        {
+            if (jumped || doublejumped)
+            {
+                jumped = false;
+                doublejumped = false;
+            }
+            timestamp = Time.time + 1f;
+        }
     }
 
     private bool IsGrounded()
